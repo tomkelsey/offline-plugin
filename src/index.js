@@ -328,9 +328,9 @@ export default class OfflinePlugin {
 
       if (isWebpack5) {
         compiler.hooks.thisCompilation.tap(plugin, (compilation) => {
-          compilation.hooks.processAssets.tapPromise(
+          compilation.hooks.processAssets.tapAsync(
             plugin,
-            () => emitFn(compilation)
+            (result, callback) => emitFn(compilation, callback)
          );
         })
       } else {

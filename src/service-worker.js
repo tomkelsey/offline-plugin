@@ -122,12 +122,21 @@ export default class ServiceWorker {
     // Needed for HMR. offline-plugin doesn't support it,
     // but added just in case to prevent other errors
     const compilationFn = (compilation) => {
-      if (compilation.cache) {
-        if (!compilation.cache[name]) {
-          compilation.cache[name] = {};
-        }
+      const isWebpack5 = !!compiler.webpack;
 
-        compilation.cache = compilation.cache[name];
+      if (isWebpack5) {
+        let compilationCache = compilation.getCache();
+        if (compilationCache) {
+          compilationCache = compilationCache[name] || {};
+        }
+      } else {
+        if (compilation.cache) {
+          if (!compilation.cache[name]) {
+            compilation.cache[name] = {};
+          }
+
+          compilation.cache = compilation.cache[name];
+        }
       }
     };
 

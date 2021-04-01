@@ -213,8 +213,14 @@ export default class OfflinePlugin {
     const afterResolveFn = (result, callback) => {
       const resource = path.resolve(compiler.context, result.resource);
 
+      const isWebpack5 = !!compiler.webpack;
+
       if (resource !== runtimePath) {
-        callback(null, result);
+        if (isWebpack5) {
+          callback(null);
+        } else {
+          callback(null, result);
+        }
         return;
       }
 
@@ -231,7 +237,11 @@ export default class OfflinePlugin {
         options: JSON.stringify(data)
       });
 
-      callback(null, result);
+      if (isWebpack5) {
+        callback(null);
+      } else {
+        callback(null, result);
+      }
     };
 
     const makeFn = (compilation, callback) => {
@@ -302,8 +312,16 @@ export default class OfflinePlugin {
     if (compiler.hooks) {
       const plugin = { name: 'OfflinePlugin' };
 
+      const isWebpack5 = !!compiler.webpack;
+
       compiler.hooks.normalModuleFactory.tap(plugin, (nmf) => {
-        nmf.hooks.afterResolve.tapAsync(plugin, afterResolveFn);
+        if (isWebpack5) {
+          nmf.hooks.afterResolve.tapAsync(plugin, (result, callback) => {
+            afterResolveFn(result.createData, callback)
+          });
+        } else {
+          nmf.hooks.afterResolve.tapAsync(plugin, afterResolveFn);
+        }
       });
 
       compiler.hooks.make.tapAsync(plugin, makeFn);

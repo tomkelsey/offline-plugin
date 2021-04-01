@@ -329,7 +329,7 @@ export default class OfflinePlugin {
       if (isWebpack5) {
         compiler.hooks.thisCompilation.tap(plugin, (compilation) => {
           compilation.hooks.processAssets.tapAsync(
-            plugin,
+            { name: plugin.name, stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_SUMMARIZE },
             (result, callback) => emitFn(compilation, callback)
          );
         })

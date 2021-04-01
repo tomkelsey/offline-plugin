@@ -330,7 +330,7 @@ export default class OfflinePlugin {
         compiler.hooks.thisCompilation.tap(plugin, (compilation) => {
           compilation.hooks.processAssets.tapPromise(
             plugin,
-            emitFn
+            () => emitFn(compilation)
          );
         })
       } else {

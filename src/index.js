@@ -327,6 +327,7 @@ export default class OfflinePlugin {
       compiler.hooks.make.tapAsync(plugin, makeFn);
 
       if (isWebpack5) {
+        const { Compilation } = require('webpack');
         compiler.hooks.compilation.tap(plugin, (compilation) => {
           compilation.hooks.processAssets.tapPromise(
             { name: plugin, stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL},
